@@ -1,13 +1,15 @@
 import simulation_methods
 import visualization_methods
+import database_methods
 import random
 # https://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
 
 
-dt = 0.0005
+dt = 0.0001
+displayTime = 0.005
 currentTime=0
 endTime = 0.4
-N =20 # N is the number of stars
+N = 80 # N is the number of stars
 
 # give stars initial positions and velocities
 positions = []
@@ -19,7 +21,7 @@ for i in xrange(0,N):
     masses.append(random.random() / 10.0 )
 
 #initialialize the DB
-simulation_methods.initializeDatabase()
+database_methods.initializeDatabase()
 
 # calculate initial force/acceleration on each star
 accelerations = simulation_methods.updateAccelerations(positions, masses)
@@ -28,6 +30,8 @@ accelerations = simulation_methods.updateAccelerations(positions, masses)
 
 # start calculation loop:
 print "Starting simulation"
+database_methods.writeStatus(positions, masses, currentTime)
+lastWritten = currentTime
 while currentTime < endTime:
     currentTime += dt
     #calculate the new position based on the current x,v,a
@@ -38,7 +42,9 @@ while currentTime < endTime:
     #calculate the new velocity based on the current v , current a, and new a
     velocities = simulation_methods.updateVelocities(velocities, accelerations, oldAccelerations, dt)
     #write positions to file / db
-    simulation_methods.writeStatus(positions, masses, currentTime)
+    while lastWritten + displayTime < currentTime:
+        database_methods.writeStatus(positions, masses, currentTime)
+        lastWritten += displayTime
 
 print "simulation complete"
     

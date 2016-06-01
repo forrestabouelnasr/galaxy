@@ -1,5 +1,3 @@
-import galaxy_db
-
 def updateAccelerations(positions, masses):
     N = len(positions)
     G = 0.1
@@ -16,7 +14,8 @@ def updateAccelerations(positions, masses):
             distanceSquared = (
                 positionVector[0]**2 +
                 positionVector[1]**2 +
-                positionVector[2]**2 ) 
+                positionVector[2]**2 )
+            distanceSquared = max(distanceSquared, 0.00001)
             distance = distanceSquared ** 0.5
             forceMagnitude = masses[i] * masses[j] * G / distanceSquared
             forces[i][0] += forceMagnitude * positionVector[0] / distanceSquared
@@ -49,30 +48,7 @@ def updateVelocities(velocities, accelerations, oldAccelerations, dt):
         velocities[i][2] += 0.5 * (accelerations[i][2] + oldAccelerations[i][2]) * dt
     return velocities
 
-def initializeDatabase():
-    #drop all relevant tables
-    galaxy_db.database_write('drop table if exists objects')
-    #create relevant tables
-    galaxy_db.database_write('''CREATE TABLE objects (
-                                           object_id int,
-                                           time double,
-                                           x_position float,
-                                           y_position float,
-                                           z_position float,
-                                           mass float)''')
-    galaxy_db.database_write('''CREATE INDEX time_index on objects ( time )''')
-    galaxy_db.database_write('''CREATE UNIQUE INDEX time_object_id_index on objects ( time, object_id)''')
-    
-def writeStatus(positions, masses, currentTime):
-    N = len(positions)
-    for i in xrange(0,N):
-        galaxy_db.database_write('''INSERT INTO objects VALUES (?, ?, ?, ?, ?, ?)''',
-                                 [i,
-                                  currentTime,
-                                  positions[i][0],
-                                  positions[i][1],
-                                  positions[i][2],
-                                  masses[i]])
+
 
 
 

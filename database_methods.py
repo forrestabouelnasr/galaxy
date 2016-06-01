@@ -39,22 +39,22 @@ def database_write(query, arguments = []):
 
 def initializeDatabase():
     #drop all relevant tables
-    galaxy_db.database_write('drop table if exists objects')
+    database_write('drop table if exists objects')
     #create relevant tables
-    galaxy_db.database_write('''CREATE TABLE objects (
+    database_write('''CREATE TABLE objects (
                                            object_id int,
                                            time double,
                                            x_position float,
                                            y_position float,
                                            z_position float,
                                            mass float)''')
-    galaxy_db.database_write('''CREATE INDEX time_index on objects ( time )''')
-    galaxy_db.database_write('''CREATE UNIQUE INDEX time_object_id_index on objects ( time, object_id)''')
+    database_write('''CREATE INDEX time_index on objects ( time )''')
+    database_write('''CREATE UNIQUE INDEX time_object_id_index on objects ( time, object_id)''')
     
 def writeStatus(positions, masses, currentTime):
     N = len(positions)
     for i in xrange(0,N):
-        galaxy_db.database_write('''INSERT INTO objects VALUES (?, ?, ?, ?, ?, ?)''',
+        database_write('''INSERT INTO objects VALUES (?, ?, ?, ?, ?, ?)''',
                                  [i,
                                   currentTime,
                                   positions[i][0],

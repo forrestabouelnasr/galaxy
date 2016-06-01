@@ -1,4 +1,4 @@
-import galaxy_db
+import database_methods
 import numpy as np
 from images2gif import writeGif
 from PIL import Image
@@ -14,25 +14,28 @@ def visualize():
     data = np.zeros( (plotsize,plotsize,3), dtype=np.uint8)
     
     #first, gather all times from the db
-    times = [x[0] for x in galaxy_db.database_read('''select distinct time from objects''')]
+    times = [x[0] for x in database_methods.database_read('''select distinct time from objects''')]
     
     counter = 0
     #at each time...
     for time in times:
         data = np.zeros( (plotsize,plotsize,3), dtype=np.uint8)
         #gather all details for each star
-        stars = galaxy_db.database_read('''select object_id, x_position, y_position, z_position, mass
+        stars = database_methods.database_read('''select object_id, x_position, y_position, z_position, mass
                                             from objects
                                             where time = ?''', [time])
         for star in stars:
+            position = [star[1], star[2], star[3]]
+            mass = star[4]
+            #[center, r] = transform
             #for each star, draw a circle
-            center = [star[1], star[2]]
+            plotCenter = [star[1], star[2]]
             r = (star[4] ** (1.0/3.0))
-            data = draw_circle([center[0]*plotsize,center[1]*plotsize],r*radius,data)
+            data = draw_circle([plotCenter[0]*plotsize,plotCenter[1]*plotsize],r*radius,data)
         
         #construct an image
         img = Image.fromarray(data, 'RGB')
-        filename = 'image'+'0'*(8-len(str(counter)))+str(counter)+'.png'
+        filename = 'image'+'0'*(8-len(str(counter)))+str(counter)+'.png' 
         image_filenames.append(filename)
         img.save(filename)
         counter+=1
@@ -46,9 +49,7 @@ def visualize():
         pass
     return
 
-    
-    
-    
+
 
 
 def draw_circle(center,r,data):
