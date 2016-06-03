@@ -5,19 +5,19 @@ import random
 # https://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
 
 
-dt = 0.0001
-displayTime = 0.005
+dt = 0.001
+displayTime = 0.002
 currentTime=0
-endTime = 0.4
-N = 80 # N is the number of stars
+endTime = 4.0
+N = 20 # N is the number of stars
 
 # give stars initial positions and velocities
 positions = []
 velocities = []
 masses =[]
 for i in xrange(0,N):
-    positions.append([random.random(), random.random(), 0.0])
-    velocities.append([random.random(), random.random(), 0.0])
+    positions.append([random.random()-0.5, random.random()-0.5, random.random()-0.5])
+    velocities.append([random.random()-0.5, random.random()-0.5, random.random()-0.5])
     masses.append(random.random() / 10.0 )
 
 #initialialize the DB

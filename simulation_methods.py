@@ -15,7 +15,7 @@ def updateAccelerations(positions, masses):
                 positionVector[0]**2 +
                 positionVector[1]**2 +
                 positionVector[2]**2 )
-            distanceSquared = max(distanceSquared, 0.00001)
+            distanceSquared = max(distanceSquared, 0.0003)
             distance = distanceSquared ** 0.5
             forceMagnitude = masses[i] * masses[j] * G / distanceSquared
             forces[i][0] += forceMagnitude * positionVector[0] / distanceSquared
@@ -48,7 +48,20 @@ def updateVelocities(velocities, accelerations, oldAccelerations, dt):
         velocities[i][2] += 0.5 * (accelerations[i][2] + oldAccelerations[i][2]) * dt
     return velocities
 
-
+def calculateForces_prototype(positions, masses):
+    #first, split the volume into 64 cells; classify each star into a cell
+    #second, calculate aggregate properties for each cell, i.e. center-of-mass, total mass
+    #third, for each star, calculate forces with
+    #   (a) all stars in the same cell
+    #   (b) all the stars in neighboring cells ?
+    #   (c) the aggregates of the non-neighboring cells
+    cellBoundaries = calculateCellBoundaries(positions)
+    
+    
+    
+    
+def calculateCellBoundaries(positions):
+    pass
 
 
 
